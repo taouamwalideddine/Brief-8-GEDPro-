@@ -1,14 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ConfigService } from '@nestjs/config';
+import { IConfig } from './config/configuration.interface';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
-  // Enable CORS
+  const configService = app.get(ConfigService<IConfig>);
+
+  // enable CORS
   app.enableCors();
-  
+
   // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
@@ -18,19 +21,20 @@ async function bootstrap() {
     }),
   );
 
-  // Swagger configuration
+  // Swagger documentation
   const config = new DocumentBuilder()
     .setTitle('GEDPro API')
     .setDescription('GEDPro - Plateforme GED RH Intelligente')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
-  
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(process.env.PORT || 3000);
-  console.log(`Application is running on: ${await app.getUrl()}`);
+  const port = configService.get('port', 3000);
+  await app.listen(port);
+  console.log(`Application is running on: http://localhost:${port}`);
+  console.log(`API Documentation: http://localhost:${port}/api`);
 }
 
 bootstrap();

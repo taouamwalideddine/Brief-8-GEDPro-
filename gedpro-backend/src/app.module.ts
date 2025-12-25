@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
+import { UsersModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
 import configuration from './config/configuration';
-import { IConfig } from './config/configuration.interface';
 
 @Module({
   imports: [
@@ -11,6 +12,8 @@ import { IConfig } from './config/configuration.interface';
       load: [configuration],
     }),
     DatabaseModule,
+    UsersModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

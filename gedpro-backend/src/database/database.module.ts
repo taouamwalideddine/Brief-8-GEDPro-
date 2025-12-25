@@ -9,24 +9,30 @@ import { IConfig } from '../config/configuration.interface';
   imports: [
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService<IConfig>) => ({
-        type: 'postgres',
-        host: configService.get('database.postgres.host'),
-        port: configService.get('database.postgres.port'),
-        username: configService.get('database.postgres.username'),
-        password: configService.get('database.postgres.password'),
-        database: configService.get('database.postgres.database'),
-        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-        synchronize: true, // Set to false in production
-        logging: configService.get('nodeEnv') === 'development',
-      }),
+      useFactory: (configService: ConfigService<IConfig>) => {
+        const dbConfig = configService.get('database');
+        return {
+          type: 'postgres',
+          host: dbConfig?.postgres.host,
+          port: dbConfig?.postgres.port,
+          username: dbConfig?.postgres.username,
+          password: dbConfig?.postgres.password,
+          database: dbConfig?.postgres.database,
+          entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+          synchronize: true, 
+          logging: configService.get('nodeEnv') === 'development',
+        };
+      },
       inject: [ConfigService],
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService<IConfig>) => ({
-        uri: configService.get('database.mongo.uri'),
-      }),
+      useFactory: (configService: ConfigService<IConfig>) => {
+        const dbConfig = configService.get('database');
+        return {
+          uri: dbConfig?.mongo.uri,
+        };
+      },
       inject: [ConfigService],
     }),
   ],

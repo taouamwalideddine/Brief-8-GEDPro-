@@ -4,11 +4,11 @@ import { IConfig } from './configuration.interface';
 export default registerAs('config', (): IConfig => {
   return {
     nodeEnv: process.env.NODE_ENV || 'development',
-    port: parseInt(process.env.PORT, 10) || 3000,
+    port: Number(process.env.PORT) || 3000,
     database: {
       postgres: {
         host: process.env.POSTGRES_HOST || 'localhost',
-        port: parseInt(process.env.POSTGRES_PORT, 10) || 5432,
+        port: Number(process.env.POSTGRES_PORT) || 5432,
         username: process.env.POSTGRES_USER || 'postgres',
         password: process.env.POSTGRES_PASSWORD || 'postgres',
         database: process.env.POSTGRES_DB || 'gedpro',
